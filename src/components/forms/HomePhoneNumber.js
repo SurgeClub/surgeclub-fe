@@ -28,9 +28,10 @@ export default class HomePhoneNumber extends Component {
       <form className="form-inline text-center" onSubmit={handleSubmit}>
         <Input
           type="tel"
+          placeholder="Your phone number"
           {...phoneNumber} />
         <Button bsStyle="default" onClick={handleSubmit} className="margin-sm-left">
-          Submit
+          Let's go
         </Button>
       </form>
     );
