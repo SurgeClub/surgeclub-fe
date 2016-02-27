@@ -1,4 +1,5 @@
 import { createStore as _createStore, applyMiddleware, compose } from 'redux';
+import { reduxReactFirebase } from 'redux-react-firebase';
 import createMiddleware from './middleware/clientMiddleware';
 import { syncHistory } from 'react-router-redux';
 
@@ -13,12 +14,16 @@ export default function createStore(history, client, data) {
     const { persistState } = require('redux-devtools');
     const DevTools = require('../containers/DevTools/DevTools');
     finalCreateStore = compose(
+      reduxReactFirebase('https://surgeclub.firebaseio.com'),
       applyMiddleware(...middleware),
       window.devToolsExtension ? window.devToolsExtension() : DevTools.instrument(),
       persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
     )(_createStore);
   } else {
-    finalCreateStore = applyMiddleware(...middleware)(_createStore);
+    finalCreateStore = compose(
+      reduxReactFirebase('https://surgeclub.firebaseio.com'),
+      applyMiddleware(...middleware)
+    )(_createStore);
   }
 
   const reducer = require('./modules/reducer');

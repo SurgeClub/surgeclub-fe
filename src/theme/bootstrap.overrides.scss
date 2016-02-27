@@ -1,11 +1,19 @@
-/**
- * Override Bootstrap styles that you can't modify via variables here.
- *
- */
+@import url('https://fonts.googleapis.com/css?family=Lato:400,300');
+@import 'helpers';
+
+html, body{
+  font-family: 'Lato', sans-serif;
+  background: $navbar-default-bg;
+}
 
 .navbar-brand {
   position: relative;
   padding-left: 50px;
+}
+
+.form-control,
+.form-control:focus {
+  box-shadow: none;
 }
 
 .navbar-default .navbar-nav > .active > a,

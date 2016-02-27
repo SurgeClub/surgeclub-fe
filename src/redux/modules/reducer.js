@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 import multireducer from 'multireducer';
 import { routeReducer } from 'react-router-redux';
-import {reducer as reduxAsyncConnect} from 'redux-async-connect';
+import { reducer as reduxAsyncConnect } from 'redux-async-connect';
+import { firebaseStateReducer } from 'redux-react-firebase';
+
 
 import auth from './auth';
 import counter from './counter';
@@ -10,6 +12,7 @@ import info from './info';
 import widgets from './widgets';
 
 export default combineReducers({
+  firebase: firebaseStateReducer,
   routing: routeReducer,
   reduxAsyncConnect,
   auth,
