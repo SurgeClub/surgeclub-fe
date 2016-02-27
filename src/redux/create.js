@@ -1,7 +1,7 @@
 import { createStore as _createStore, applyMiddleware, compose } from 'redux';
-import { reduxReactFirebase } from 'redux-react-firebase';
 import createMiddleware from './middleware/clientMiddleware';
 import { syncHistory } from 'react-router-redux';
+import { reduxReactFirebase } from 'redux-react-firebase';
 
 export default function createStore(history, client, data) {
   // Sync dispatched route actions to the history

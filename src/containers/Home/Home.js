@@ -1,26 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import { firebase as firebaseConnect, helpers } from 'redux-react-firebase';
-const { dataToJS } = helpers;
+// import qs from 'qs';
+import { firebase as firebaseConnect } from 'redux-react-firebase';
 
 import HomePhoneNumber from 'components/forms/HomePhoneNumber';
+import EventsFeed from 'components/EventsFeed';
 
 import Helmet from 'react-helmet';
 
-@firebaseConnect([
-  'users'
-])
-@connect(
-  ({ firebase }) => ({
-    todos: dataToJS(firebase, 'users'),
-  })
-)
+@firebaseConnect()
 export default class Home extends Component {
   static propTypes = {
     firebase: PropTypes.object
   }
-
   state = {
     submitted: false
   }
@@ -37,9 +29,19 @@ export default class Home extends Component {
     const { submitted } = this.state;
 
     return (
-      <Grid className={styles.home} fluid>
+      <Grid fluid>
         <Helmet title="Home"/>
-        <Row>
+        <Row className={`text-center ${styles.header}`}>
+          <Col xs={12} md={8} mdOffset={2}>
+            <h1>
+              Driver smarter. Make more money
+            </h1>
+            <h3>
+              <small>
+                Make sure you're at the right place when surge starts; drive less and make more money.
+              </small>
+            </h3>
+          </Col>
           <Col xs={12} md={8} mdOffset={2}>
             <h3 className="text-center">
               <small>
@@ -51,6 +53,11 @@ export default class Home extends Component {
               <h4 className="text-success text-center">Awesome! We will be in touch soon!</h4> :
               <HomePhoneNumber onSubmit={this.submitPhoneNumber.bind(this)} />
             }
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} md={6} mdOffset={3}>
+            <EventsFeed />
           </Col>
         </Row>
       </Grid>
