@@ -55,7 +55,7 @@ export default class Home extends Component {
       <Grid fluid>
         <Helmet title="Home"/>
         <Row className={`text-center ${styles.header}`}>
-          <Col xs={12} md={8} mdOffset={2}>
+          <Col xs={12} md={10} mdOffset={1}>
             <h1>
               Driver smarter. Make more money
             </h1>
@@ -68,7 +68,7 @@ export default class Home extends Component {
           {this.renderPhoneNumberForm()}
         </Row>
         <Row>
-          <Col xs={12} md={6} mdOffset={3}>
+          <Col xs={12} md={8} mdOffset={2}>
             <EventsFeed />
           </Col>
         </Row>
