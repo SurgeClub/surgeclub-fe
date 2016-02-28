@@ -100,15 +100,6 @@ export default class EventsFeed extends Component {
       const peaksData = this.getWeightedData(peaks);
       const valleysData = this.getWeightedData(valleys);
       console.log(peaksData.length, valleysData.length);
-      if (peaksHeatmap) {
-        peaksHeatmap.setData(peaksData);
-      } else {
-        peaksHeatmap = new google.maps.visualization.HeatmapLayer({
-          data: peaksData,
-          map: this._googleMapComponent.props.map,
-          radius: 60
-        });
-      }
 
       if (valleysHeatmap) {
         valleysHeatmap.setData(valleysData);
@@ -116,7 +107,7 @@ export default class EventsFeed extends Component {
         valleysHeatmap = new google.maps.visualization.HeatmapLayer({
           data: valleysData,
           map: this._googleMapComponent.props.map,
-          radius: 60,
+          radius: 10,
           gradient: [
             'rgba(0, 255, 255, 0)',
             'rgba(0, 255, 255, 1)',
@@ -130,6 +121,16 @@ export default class EventsFeed extends Component {
             'rgba(0, 0, 127, 1)',
             'rgba(63, 0, 91, 1)'
           ]
+        });
+      }
+
+      if (peaksHeatmap) {
+        peaksHeatmap.setData(peaksData);
+      } else {
+        peaksHeatmap = new google.maps.visualization.HeatmapLayer({
+          data: peaksData,
+          map: this._googleMapComponent.props.map,
+          radius: 60
         });
       }
     }
