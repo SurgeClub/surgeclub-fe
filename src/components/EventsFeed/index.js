@@ -85,7 +85,7 @@ export default class EventsFeed extends Component {
     const { selectedDate } = this.state;
 
     return Object.values(data).reduce((array, event) => {
-      if (moment(event.time).isBefore(selectedDate.clone().add(15, 'minutes')) && moment(event.time).isAfter(selectedDate.clone())) {
+      if (moment(event.time).isBefore(selectedDate.clone().add(30, 'minutes')) && moment(event.time).isAfter(selectedDate.clone())) {
         return array.concat({location: new google.maps.LatLng(event.lat, event.long), weight: event.rating});
       }
 
