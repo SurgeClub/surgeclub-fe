@@ -1,5 +1,11 @@
 *{
 	margin: 0;
+  font-family: 'Open Sans Condensed', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -ms-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  font-weight: 300;
 }
 
 
@@ -17,6 +23,10 @@
 	background-color: black;
 	padding: 5px;
 	font-size: 48px;
+}
+
+.header h1{
+  font-weight: 800;
 }
 
 
