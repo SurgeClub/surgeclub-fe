@@ -107,7 +107,7 @@ export default class EventsFeed extends Component {
         valleysHeatmap = new google.maps.visualization.HeatmapLayer({
           data: valleysData,
           map: this._googleMapComponent.props.map,
-          radius: 10,
+          radius: 30,
           gradient: [
             'rgba(0, 255, 255, 0)',
             'rgba(0, 255, 255, 1)',

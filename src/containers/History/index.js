@@ -38,15 +38,13 @@ export default class History extends Component {
 
   renderEvent() {
     const { history } = this.props;
-    const rangeOfGraph = moment(history.uber[history.uber.length - 1].time).unix() - moment(history.uber[0].time).unix();
-    const startTime = moment(history.start_time).unix();
-
-    const diffPercentage = startTime - moment(history.uber[0].time).unix();
-    console.log(diffPercentage);
+    const rangeOfGraph = moment(history.uber[history.uber.length - 1].time).diff(moment(history.uber[0].time));
+    const diffPercentage = moment(history.start_time).diff(moment(history.uber[0].time));
+    const leftOffset = diffPercentage / rangeOfGraph * 100 * 500 / 100;
 
     return (
-      <div style={{position: 'absolute', left: diffPercentage}}>
-        HERE
+      <div style={{position: 'absolute', left: leftOffset, borderLeft: `1px solid red`, height: this.state.height}}>
+        Start
       </div>
     );
   }
@@ -84,7 +82,11 @@ export default class History extends Component {
       <Grid>
         <Row>
           <Col md={8} mdOffset={2}>
-            {history && history.name}
+            <h3>
+              <small>
+                {history && history.event}
+              </small>
+            </h3>
           </Col>
           <Col md={8} mdOffset={2}>
             {history && this.renderUber()}
