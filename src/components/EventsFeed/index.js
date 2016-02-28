@@ -15,6 +15,8 @@ import TimeSlider from './TimeSlider';
 
 const styles = require('./style.scss');
 
+let heatmap;
+
 @firebaseConnect()
 @connect(
   ({ firebase }) => {
@@ -39,9 +41,9 @@ export default class EventsFeed extends Component {
     this.getEvents();
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return this.props.events !== nextProps.events || !this.state.selectedDate.isSame(nextState.selectedDate);
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.events !== nextProps.events || !this.state.selectedDate.isSame(nextState.selectedDate);
+  }
 
   onDateChange(date) {
     this.setState({selectedDate: date}, () => {
@@ -120,6 +122,7 @@ export default class EventsFeed extends Component {
         <OverlayView
           position={{lat: event.latitude, lng: event.longitude}}
           mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+          getPixelPositionOffset={(width, height) => ({ x: -(width / 2), y: -(height / 2) })}
           key={event.id}>
           <OverlayTrigger trigger={['focus', 'hover']} placement="top" overlay={popover}>
             <div className={styles.overlay}/>
@@ -141,6 +144,7 @@ export default class EventsFeed extends Component {
           }
           googleMapElement={
             <GoogleMap
+              ref={(map) => this._googleMapComponent = map}
               defaultZoom={12}
               defaultCenter={{lat: 37.7833, lng: -122.4167}}>
               {overlays}
@@ -153,6 +157,19 @@ export default class EventsFeed extends Component {
 
   render() {
     const { show, selectedDate } = this.state;
+
+    if (__CLIENT__ && this._googleMapComponent) {
+      if (heatmap) {
+        heatmap.setData(this.eventsArray().map(event => new google.maps.LatLng(event.latitude, event.longitude)));
+      } else {
+        heatmap = new google.maps.visualization.HeatmapLayer({
+          data: this.eventsArray().map(event => new google.maps.LatLng(event.latitude, event.longitude)),
+          map: this._googleMapComponent.props.map,
+          radius: 20,
+          gradient: [100, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(substract => `rgba(231, 76, 60, ${1 - (substract / 100)})`)
+        });
+      }
+    }
 
     return (
       <Row>

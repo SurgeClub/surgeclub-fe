@@ -33,7 +33,7 @@ export default class Html extends Component {
           {head.link.toComponent()}
           {head.script.toComponent()}
 
-          <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVT6yiwpLkUQeGfFBI4mVSnEAJnP6OskU"/>
+          <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVT6yiwpLkUQeGfFBI4mVSnEAJnP6OskU&libraries=visualization"/>
 
           <link rel="shortcut icon" href="/favicon.ico" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
