@@ -1,34 +1,32 @@
 import React, { Component, PropTypes } from 'react';
-import { Row, Col, ButtonGroup, Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { GoogleMapLoader, GoogleMap, OverlayView } from 'react-google-maps';
+import { Row, Col, ButtonGroup, Button } from 'react-bootstrap';
+import { GoogleMapLoader, GoogleMap } from 'react-google-maps';
 import { connect } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { firebase as firebaseConnect, helpers } from 'redux-react-firebase';
-const { isLoaded, dataToJS } = helpers;
-
-// helpers
-import { formatDate, parseDate, sortByDate } from 'helpers/numberedDate';
+const { dataToJS } = helpers;
 
 // components
 import TimeSlider from './TimeSlider';
 
-const styles = require('./style.scss');
-
-let heatmap;
+let peaksHeatmap;
+let valleysHeatmap;
 
 @firebaseConnect()
 @connect(
   ({ firebase }) => {
     return {
-      events: dataToJS(firebase, 'events')
+      peaks: dataToJS(firebase, 'peaks'),
+      valleys: dataToJS(firebase, 'valleys')
     };
   }
 )
 export default class EventsFeed extends Component {
   static propTypes = {
     firebase: PropTypes.object,
-    events: PropTypes.object,
+    valleys: PropTypes.object,
+    peaks: PropTypes.object,
     dispatch: PropTypes.func
   }
 
@@ -38,98 +36,89 @@ export default class EventsFeed extends Component {
   }
 
   componentWillMount() {
-    this.getEvents();
+    this.getData();
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.props.events !== nextProps.events || !this.state.selectedDate.isSame(nextState.selectedDate);
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return this.props.surges !== nextProps.surges || !this.state.selectedDate.isSame(nextState.selectedDate);
+  // }
 
   onDateChange(date) {
     this.setState({selectedDate: date}, () => {
-      this.getEvents();
+      this.getData();
     });
   }
 
-  getEvents() {
+  getFirebaseData(path) {
     const { dispatch, firebase } = this.props;
-    const { selectedDate } = this.state;
+    // const { selectedDate } = this.state;
     // This is bad. Don't do this please.
     firebase.ref
-      .child('events')
-      .orderByChild('startTime')
-      .startAt(parseDate(selectedDate))
-      .endAt(parseDate(selectedDate.clone().add(1, 'days')))
+      .child(path)
+      .orderByChild('rating')
       .on('child_added', (snapshot) => {
         dispatch({
           type: '@@reactReduxFirebase/SET',
-          path: `events/${snapshot.key()}`,
+          path: `${path}/${snapshot.key()}`,
           data: snapshot.val()
         });
       });
   }
 
-  eventsArray() {
-    const { events } = this.props;
-    const { selectedDate } = this.state;
-
-    if (!isLoaded(events)) {
-      return [];
-    }
-
-    const filteredEvents = Object.keys(events).reduce((array, eventId) => {
-      const event = events[eventId];
-
-      if (event.startTime < parseDate(selectedDate) || event.startTime > parseDate(selectedDate.clone().add(1, 'days'))) {
-        // The user clicked around and now we have events that should not be on the screen
-        return array;
-      }
-
-      return array.concat(event);
-    }, []);
-
-    return sortByDate(filteredEvents, 'asc');
+  getData() {
+    this.getFirebaseData('peaks');
+    this.getFirebaseData('valleys');
   }
 
-  renderFeed() {
-    return this.eventsArray().map(event => (
-      <Row className="margin-sm-v" key={event.id}>
-        <Col xs={2} style={{height: 100, background: `url(${event.imageUrl}) center center no-repeat`, backgroundSize: 'cover'}} />
-        <Col xs={7}>
-          <h4 className="margin-sm-top">
-            {event.title}
-          </h4>
-          <a href={`https://www.google.com/maps/place/${event.address}`} target="_blank">
-            {event.venueName ? event.venueName : event.address}
-          </a>
-        </Col>
-        <Col xs={3} className="margin-md-top">
-          {event.startTime ? formatDate(event.startTime) : null} {event.stopTime ? `- ${formatDate(event.stopTime)}` : null}
-        </Col>
-      </Row>
-    ));
+  setupHeatmap() {
+    const { peaks, valleys } = this.props;
+
+    if (__CLIENT__ && this._googleMapComponent) {
+      const peaksData = Object.values(peaks).map(event => ({location: new google.maps.LatLng(event.lat, event.long), weight: event.rating}));
+      const valleysData = Object.values(valleys).map(event => ({location: new google.maps.LatLng(event.lat, event.long), weight: event.rating}));
+
+      if (peaksHeatmap) {
+        peaksHeatmap.setData(peaksData);
+      } else {
+        peaksHeatmap = new google.maps.visualization.HeatmapLayer({
+          data: peaksData,
+          map: this._googleMapComponent.props.map,
+          radius: 60
+        });
+      }
+
+      if (valleysHeatmap) {
+        valleysHeatmap.setData(valleysData);
+      } else {
+        valleysHeatmap = new google.maps.visualization.HeatmapLayer({
+          data: valleysData,
+          map: this._googleMapComponent.props.map,
+          radius: 60,
+          gradient: [
+            'rgba(0, 255, 255, 0)',
+            'rgba(0, 255, 255, 1)',
+            'rgba(0, 191, 255, 1)',
+            'rgba(0, 127, 255, 1)',
+            'rgba(0, 63, 255, 1)',
+            'rgba(0, 0, 255, 1)',
+            'rgba(0, 0, 223, 1)',
+            'rgba(0, 0, 191, 1)',
+            'rgba(0, 0, 159, 1)',
+            'rgba(0, 0, 127, 1)',
+            'rgba(63, 0, 91, 1)',
+            'rgba(127, 0, 63, 1)',
+            'rgba(191, 0, 31, 1)',
+            'rgba(255, 0, 0, 1)'
+          ]
+        });
+      }
+    }
   }
 
   renderMap() {
-    const overlays = this.eventsArray().map(event => {
-      const popover = (
-        <Popover id={`${event.id}-event`} title={`${formatDate(event.startTime)} - ${event.venueName}`}>
-          {event.title}
-        </Popover>
-      );
-
-      return (
-        <OverlayView
-          position={{lat: event.latitude, lng: event.longitude}}
-          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-          getPixelPositionOffset={(width, height) => ({ x: -(width / 2), y: -(height / 2) })}
-          key={event.id}>
-          <OverlayTrigger trigger={['focus', 'hover']} placement="top" overlay={popover}>
-            <div className={styles.overlay}/>
-          </OverlayTrigger>
-        </OverlayView>
-      );
-    });
+    if (!this.props.peaks || !this.props.valleys) {
+      return false;
+    }
 
     return (
       <section style={{height: 500}}>
@@ -146,9 +135,7 @@ export default class EventsFeed extends Component {
             <GoogleMap
               ref={(map) => this._googleMapComponent = map}
               defaultZoom={12}
-              defaultCenter={{lat: 37.7833, lng: -122.4167}}>
-              {overlays}
-            </GoogleMap>
+              defaultCenter={{lat: 37.7833, lng: -122.4167}} />
           }
         />
     </section>
@@ -158,18 +145,7 @@ export default class EventsFeed extends Component {
   render() {
     const { show, selectedDate } = this.state;
 
-    if (__CLIENT__ && this._googleMapComponent) {
-      if (heatmap) {
-        heatmap.setData(this.eventsArray().map(event => new google.maps.LatLng(event.latitude, event.longitude)));
-      } else {
-        heatmap = new google.maps.visualization.HeatmapLayer({
-          data: this.eventsArray().map(event => new google.maps.LatLng(event.latitude, event.longitude)),
-          map: this._googleMapComponent.props.map,
-          radius: 20,
-          gradient: [100, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(substract => `rgba(231, 76, 60, ${1 - (substract / 100)})`)
-        });
-      }
-    }
+    this.setupHeatmap();
 
     return (
       <Row>

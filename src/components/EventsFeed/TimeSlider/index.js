@@ -11,10 +11,10 @@ export default class TimeSlider extends Component {
   constructor() {
     super(...arguments);
 
-    const selectedTime = parseInt(this.props.selectedDate.format('HHmm'), 10);
+    const selectedTime = this.props.selectedDate.unix();
 
     this.state = {
-      selectedTime: selectedTime.toString().slice(0, 2) + parseInt(selectedTime.toString().slice(2), 10) * 100 / 60
+      selectedTime
     };
   }
 
@@ -22,13 +22,8 @@ export default class TimeSlider extends Component {
     const { selectedDate, onChange } = this.props;
     const { selectedTime } = this.state;
 
-    const slicedMinute = selectedTime.toString().slice(2);
-    const roundedMinute = Math.floor(slicedMinute / 100 * 60).toString();
-    const selectedMinute = roundedMinute.length > 1 ? roundedMinute : `0${roundedMinute}`;
-    const momentTime = moment(`${selectedDate.format('YYYYMMDD')}T${selectedTime.toString().slice(0, 2)}${selectedMinute}`);
-    const selectedDateStartOfDay = selectedDate.clone().startOf('day');
-    const isToday = selectedDateStartOfDay.isSame(moment().startOf('day'));
-    const minValue = isToday ? parseInt(moment().format('HHmm'), 10) : parseInt(selectedDateStartOfDay.format('HHmm'), 10);
+    const momentTime = moment.unix(selectedTime);
+    const date = selectedDate.clone().startOf('day').isSame(moment().startOf('day')) ? moment() : selectedDate.clone().startOf('day');
 
     return (
       <Row>
@@ -37,8 +32,8 @@ export default class TimeSlider extends Component {
             type="range"
             step={1}
             value={selectedTime}
-            min={minValue}
-            max={parseInt(selectedDate.clone().endOf('day').format('HHmm'), 10)}
+            min={date.unix()}
+            max={date.endOf('day').unix()}
             onChange={(event) => this.setState({selectedTime: event.target.value})}
             onMouseUp={() => onChange(momentTime)}/>
         </Col>

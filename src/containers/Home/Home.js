@@ -27,7 +27,7 @@ export default class Home extends Component {
 
   renderPhoneNumberForm() {
     const { submitted } = this.state;
-    console.log(cookie.load('phoneNumberSaved'));
+
     if (!cookie.load('phoneNumberSaved')) {
       return (
         <Col xs={12} md={8} mdOffset={2}>
