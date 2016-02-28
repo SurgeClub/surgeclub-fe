@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-// import qs from 'qs';
+import cookie from 'react-cookie';
 import { firebase as firebaseConnect } from 'redux-react-firebase';
 
 import HomePhoneNumber from 'components/forms/HomePhoneNumber';
@@ -22,11 +22,34 @@ export default class Home extends Component {
     const { phoneNumber } = form;
 
     firebase.push('/users', { phoneNumber }).then(() => this.setState({submitted: true}));
+    setTimeout(() => cookie.save('phoneNumberSaved', true), 3000);
+  }
+
+  renderPhoneNumberForm() {
+    const { submitted } = this.state;
+    console.log(cookie.load('phoneNumberSaved'));
+    if (!cookie.load('phoneNumberSaved')) {
+      return (
+        <Col xs={12} md={8} mdOffset={2}>
+          <h3 className="text-center">
+            <small>
+              Receive notifications via text messages:
+            </small>
+          </h3>
+          {
+            submitted ?
+            <h4 className="text-success text-center">Awesome! We will be in touch soon!</h4> :
+            <HomePhoneNumber onSubmit={this.submitPhoneNumber.bind(this)} />
+          }
+        </Col>
+      );
+    }
+
+    return false;
   }
 
   render() {
     const styles = require('./Home.scss');
-    const { submitted } = this.state;
 
     return (
       <Grid fluid>
@@ -42,18 +65,7 @@ export default class Home extends Component {
               </small>
             </h3>
           </Col>
-          <Col xs={12} md={8} mdOffset={2}>
-            <h3 className="text-center">
-              <small>
-                Receive notifications via text messages:
-              </small>
-            </h3>
-            {
-              submitted ?
-              <h4 className="text-success text-center">Awesome! We will be in touch soon!</h4> :
-              <HomePhoneNumber onSubmit={this.submitPhoneNumber.bind(this)} />
-            }
-          </Col>
+          {this.renderPhoneNumberForm()}
         </Row>
         <Row>
           <Col xs={12} md={6} mdOffset={3}>
