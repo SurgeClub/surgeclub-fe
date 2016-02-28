@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { routeReducer } from 'react-router-redux';
 import { reducer as reduxAsyncConnect } from 'redux-async-connect';
-import { firebaseStateReducer as firebase } from 'redux-react-firebase';
+import firebase from './firebase';
 
 
 // import firebase from './firebase';

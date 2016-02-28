@@ -5,6 +5,7 @@ import {
     Home,
     Login,
     NotFound,
+    History,
   } from 'containers';
 
 export default () => {
@@ -15,6 +16,7 @@ export default () => {
 
       { /* Routes */ }
       <Route path="login" component={Login}/>
+      <Route path="history/:id" component={History}/>
 
       { /* Catch all route */ }
       <Route path="*" component={NotFound} status={404} />
