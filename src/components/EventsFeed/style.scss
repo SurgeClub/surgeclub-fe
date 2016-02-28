@@ -5,3 +5,107 @@
   border-radius: $default-size;
   background-color: #e74c3c;
 }
+
+.datepickerContainer{
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+	div{
+		width: 90%;
+		input{
+			height: 42px;
+		}
+	}
+}
+
+.viewChoicesContainer{
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.mapOrFeedContainer{
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	> div {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+.eventWrapper{
+	display: flex;
+	justify-content: space-between;
+	.surgeWrapper{
+		flex-basis: 30%;
+		h3{
+			font-size: 15px;
+		}
+		div{
+			border: 1px solid #ccc;
+			font-size: 16px;
+			height: 70px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	.timeWrapper{
+		flex-basis: 30%;
+		h3{
+			font-size: 15px;
+		}
+		div {
+			font-size: 16px;
+			height: 70px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	.venueWrapper{
+		flex-basis: 30%;
+		h3{
+			font-size: 15px;
+		}
+		div {
+			font-size: 16px;
+			height: 70px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+
+	.eventTitleWrapper{
+		display: none;
+	}
+}
+
+
+
+
+@media only screen and (min-width : 992px) {
+
+
+	.datepickerContainer{
+		div{
+			width: 25%;
+		}
+	}
+
+	.mapOrFeedContainer{
+		width: 50%;
+		margin-left: 25%;
+	}
+
+	.eventTitleWrapper{
+		display: block;
+		flex-basis: 30%;
+	}
+
+
+
+}
+

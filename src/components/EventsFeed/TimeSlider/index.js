@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Row, Col, Input } from 'react-bootstrap';
+import { Input } from 'react-bootstrap';
 import moment from 'moment';
 
 export default class TimeSlider extends Component {
@@ -7,6 +7,7 @@ export default class TimeSlider extends Component {
     selectedDate: PropTypes.object,
     onChange: PropTypes.func
   }
+
 
   constructor() {
     super(...arguments);
@@ -21,7 +22,7 @@ export default class TimeSlider extends Component {
   render() {
     const { selectedDate, onChange } = this.props;
     const { selectedTime } = this.state;
-
+    const styles = require('./style.scss');
     const slicedMinute = selectedTime.toString().slice(2);
     const roundedMinute = Math.floor(slicedMinute / 100 * 60).toString();
     const selectedMinute = roundedMinute.length > 1 ? roundedMinute : `0${roundedMinute}`;
@@ -31,21 +32,25 @@ export default class TimeSlider extends Component {
     const minValue = isToday ? parseInt(moment().format('HHmm'), 10) : parseInt(selectedDateStartOfDay.format('HHmm'), 10);
 
     return (
-      <Row>
-        <Col xs={8}>
+      <div className={styles.timeAndSliderContainer}>
+        <div className={styles.sliderContainer}>
+          <p>Slide to see predicted surge</p>
           <Input
             type="range"
+            className="slider"
             step={1}
             value={selectedTime}
             min={minValue}
             max={parseInt(selectedDate.clone().endOf('day').format('HHmm'), 10)}
             onChange={(event) => this.setState({selectedTime: event.target.value})}
             onMouseUp={() => onChange(momentTime)}/>
-        </Col>
-        <Col xs={4} className="margin-sm-v">
+        </div>
+        <hr />
+        <div className={styles.time}>
           {momentTime.format('h:mmA')}
-        </Col>
-      </Row>
+        </div>
+        <hr />
+      </div>
     );
   }
 }

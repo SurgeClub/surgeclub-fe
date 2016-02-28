@@ -1,8 +1,99 @@
 @import "../../theme/variables.scss";
 
-.header{
-  margin: 100px auto;
-}
+
 :global(.datepicker__input) {
   width: 100%;
 }
+
+.brandingLanguage{
+	flex-basis: 90%;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	h1 {
+		margin: 10px 0;
+		font-size: 28px;
+	}
+}
+
+.mainContainer{
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.eventsFeedContainer{
+	flex-basis: 100%;
+	div{
+		> h3{
+			margin: 10px 0; 
+			text-align: center;
+		}
+	}
+}
+
+.phoneContainer{
+	flex-basis: 100%;
+	form {
+		width: 90%;
+		margin-left: 5%;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		div{
+			width: 100%;
+			input{
+				margin-top: 10px;
+				width: 100% !important;
+				text-align: center;
+				height: 42px;
+			}
+		}
+		button{
+			margin: 10px 0 0 0;
+			width: 50%;
+			background-color: #5cb85c;
+			color: white;
+			padding: 10px;
+			font-size: 18px;
+			&:hover{
+				color: #5cb85c;
+				background-color: white;
+				border: 1px solid #5cb85c;
+			}
+		}
+
+	}
+}
+
+
+@media only screen and (min-width : 992px) {
+		.brandingLanguage{
+			flex-basis: 50%;
+		}
+
+		.phoneContainer{
+			flex-basis: 100%;
+			form {
+				width: 50%;
+				margin-left: 25%;
+				div{
+					width: 100%;
+					input{
+						width: 50% !important;
+						text-align: center;
+						height: 42px;
+					}
+				}
+				button{
+					margin: 10px 0 0 0;
+					width: 25%;
+					background-color: #5cb85c;
+					color: white;
+				}
+
+			}
+		}
+
+
+  }

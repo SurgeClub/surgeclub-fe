@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
 // import qs from 'qs';
 import { firebase as firebaseConnect } from 'redux-react-firebase';
 
@@ -29,38 +28,32 @@ export default class Home extends Component {
     const { submitted } = this.state;
 
     return (
-      <Grid fluid>
+      <div className={styles.mainContainer}>
         <Helmet title="Home"/>
-        <Row className={`text-center ${styles.header}`}>
-          <Col xs={12} md={8} mdOffset={2}>
+          <div className={styles.brandingLanguage}>
             <h1>
               Driver smarter. Make more money
             </h1>
-            <h3>
-              <small>
-                Make sure you're at the right place when surge starts; drive less and make more money.
-              </small>
-            </h3>
-          </Col>
-          <Col xs={12} md={8} mdOffset={2}>
-            <h3 className="text-center">
-              <small>
-                Receive notifications via text messages:
-              </small>
-            </h3>
+            <span>
+                Make sure youre at the right place when surge starts; drive less and make more money.
+            </span>
+
+          </div>
             {
               submitted ?
               <h4 className="text-success text-center">Awesome! We will be in touch soon!</h4> :
-              <HomePhoneNumber onSubmit={this.submitPhoneNumber.bind(this)} />
+              <div className={styles.phoneContainer}>
+                <HomePhoneNumber onSubmit={this.submitPhoneNumber.bind(this)} />
+              </div>
             }
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} md={6} mdOffset={3}>
-            <EventsFeed />
-          </Col>
-        </Row>
-      </Grid>
+
+        <div className={styles.eventsFeedContainer}>
+          <EventsFeed />
+        </div>
+
+      </div>
+
+
     );
   }
 }

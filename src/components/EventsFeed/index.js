@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Row, Col, ButtonGroup, Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import { Panel, Accordion, ButtonGroup, Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { GoogleMapLoader, GoogleMap, OverlayView } from 'react-google-maps';
 import { connect } from 'react-redux';
 import DatePicker from 'react-datepicker';
@@ -89,22 +89,68 @@ export default class EventsFeed extends Component {
     return sortByDate(filteredEvents, 'asc');
   }
 
+  renderFakeData() {
+    const fakeData = {};
+    fakeData.surgeNubmer = 7.5;
+    fakeData.time = '7:30pm';
+    fakeData.venue = 'The Chapel';
+    fakeData.eventTitle = 'Taylor Swift';
+    return (
+      <div>
+        <div className={styles.eventWrapper}>
+          <div className={styles.surgeWrapper}>
+            <h3>Surge Rating</h3>
+            <div className={styles.surgeNubmer}>
+              <p>{fakeData.surgeNubmer}</p>
+            </div>
+          </div>
+          <div className={styles.timeWrapper}>
+            <h3>Time</h3>
+            <div className={styles.timeNubmer}>
+              <p>{fakeData.time}</p>
+            </div>
+          </div>
+          <div className={styles.eventTitleWrapper}>
+            <h3>Title</h3>
+            <div className={styles.eventTitle}>
+              {fakeData.eventTitle}
+            </div>
+          </div>
+          <div className={styles.venueWrapper}>
+            <h3>Venue</h3>
+            <div className={styles.venueTitle}>
+                {fakeData.venue}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   renderFeed() {
     return this.eventsArray().map(event => (
-      <Row className="margin-sm-v" key={event.id}>
-        <Col xs={2} style={{height: 100, background: `url(${event.imageUrl}) center center no-repeat`, backgroundSize: 'cover'}} />
-        <Col xs={7}>
-          <h4 className="margin-sm-top">
+      <div key={event.id}>
+        <div className={styles.eventWrapper}>
+          <div className={styles.surgeWrapper}>
+            <h3>Surge Rating</h3>
+            <div className={styles.surgeNubmer}>
+              <p></p>
+            </div>
+          </div>
+          <div className={styles.timeWrapper}>
+            {event.startTime ? formatDate(event.startTime) : null} {event.stopTime ? `- ${formatDate(event.stopTime)}` : null}
+          </div>
+          <div className={styles.eventTitleWrapper}>
             {event.title}
-          </h4>
-          <a href={`https://www.google.com/maps/place/${event.address}`} target="_blank">
-            {event.venueName ? event.venueName : event.address}
-          </a>
-        </Col>
-        <Col xs={3} className="margin-md-top">
-          {event.startTime ? formatDate(event.startTime) : null} {event.stopTime ? `- ${formatDate(event.stopTime)}` : null}
-        </Col>
-      </Row>
+          </div>
+          <div className={styles.venueWrapper}>
+            <a href={`https://www.google.com/maps/place/${event.address}`} target="_blank">
+              {event.venueName ? event.venueName : event.address}
+            </a>
+          </div>
+        </div>
+
+      </div>
     ));
   }
 
@@ -155,29 +201,34 @@ export default class EventsFeed extends Component {
     const { show, selectedDate } = this.state;
 
     return (
-      <Row>
-        <Col xs={12} md={4}>
+      <div>
+        <h3>Choose a date:</h3>
+        <div className={styles.datepickerContainer}>
           <DatePicker
             className="text-center margin-sm-bottom"
             dateFormat="LL"
             selected={selectedDate}
             onChange={this.onDateChange.bind(this)} />
-        </Col>
-        <Col md={4}>
+        </div>
+        <div className={styles.viewChoicesContainer}>
+          <ButtonGroup>
+            <Button active={show === 'feed'} onClick={() => this.setState({show: 'feed'})}>Calendar</Button>
+            <Button active={show === 'map'} onClick={() => this.setState({show: 'map'})}>Map</Button>
+          </ButtonGroup>
+        </div>
+        <div className={styles.timeSliderContainer}>
           <TimeSlider
             selectedDate={selectedDate}
             onChange={(momentTime) => this.setState({selectedDate: momentTime})} />
-        </Col>
-        <Col xs={12} md={4} className="text-right">
-          <ButtonGroup>
-            <Button active={show === 'feed'} onClick={() => this.setState({show: 'feed'})}>Feed</Button>
-            <Button active={show === 'map'} onClick={() => this.setState({show: 'map'})}>Map</Button>
-          </ButtonGroup>
-        </Col>
-        <Col xs={12} md={12}>
-          {show === 'feed' ? this.renderFeed() : this.renderMap()}
-        </Col>
-      </Row>
+        </div>
+        <div className={styles.mapOrFeedContainer}>
+          <Accordion>
+            <Panel header="Sunday">
+              {show === 'feed' ? this.renderFakeData() : this.renderMap()}
+            </Panel>
+          </Accordion>
+        </div>
+      </div>
     );
   }
 }
